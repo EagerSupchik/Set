@@ -22,17 +22,19 @@ public:
             }
             else
             {
-                s_array[j] = 404;
+                s_array[j] = 0;
                 cout << "Error! Repeated integer (index: " << j << ")" << endl;
             }
             j++;
         }
     }
     Set() : s_array(nullptr), size(0) {}
-    //Set(const Set& copy) : s_array(copy.s_array), size(copy.size) {}
+
+    Set(int size) : s_array(new int[size]), size(size) {}
 
     Set(const Set& other)
     {
+       size = other.size;
        s_array = new int[other.size];
 
        for (int i = 0; i < other.size; i++)
@@ -111,7 +113,7 @@ public:
      }
 
 
-     Set& operator-(const Set& other) const 
+     Set operator-(const Set& other) const
      {
          Set result(*this);
          result -= other;
@@ -119,7 +121,7 @@ public:
      }
 
 
-     Set& operator-(int num)     
+     Set operator-(int num) const
      {
          Set result(*this);
          result -= num;
@@ -171,7 +173,7 @@ public:
      }
 
 
-     Set& operator+(const Set& other) const
+     Set operator+(const Set& other) const
      {
          Set result(*this);
          result += other;
@@ -179,7 +181,7 @@ public:
      }
 
 
-     Set& operator+(int num)
+     Set operator+(int num)
      {
          Set result(*this);
          result += num;
@@ -187,20 +189,31 @@ public:
      }
 
 
-     Set& operator*(const Set& other) const 
+     Set operator*(const Set& other) const 
      {
-         Set result(*this);
-         for (int i = 0; i < size; i++) 
+         int n_size = 0;
+         for (int i = 0; i < size; i++)
          {
              if (other.SetCheck(s_array[i]))
              {
-                 result += s_array[i];
+                 n_size++;
+             }
+         }
+
+         Set result(n_size);
+         n_size = 0;
+         for (int i = 0; i < size; i++)
+         {
+             if (other.SetCheck(s_array[i]))
+             {
+                 result.s_array[n_size] = s_array[i];
+                 n_size++;
              }
          }
          return result;
      }
 
-     Set& operator*=(const Set& other)
+     Set operator*=(const Set& other)
      {
          Set result = *this * other;
          *this = result;
@@ -238,6 +251,14 @@ public:
          return os;
      }
 
+     void getset()
+     {
+         for (int i = 0; i < size; i++)
+         {
+             cout << s_array[i] << " ";
+         }
+     }
+
      ~Set()
      {
          delete[] s_array;
@@ -250,11 +271,27 @@ public:
 
 int main()
 {
-    Set A = {53, 9, 46, 5, 15, 40};
+    Set A = {9, 40, 77, 65, 52};
     Set B = {15, 83, 70, 11, 2, 35, 77};
-    Set C = {53, 9, 46};
+    Set C = {9, 8, 77};
 
-    Set s1 = A - C;
-    cout << s1;
+    A += C;
+    cout << A << endl;
+
+    Set s1 = A - B;
+    cout << s1 << endl;
+
+    Set D = { 74, 43, 76, 63, 51 };
+    D -= 63;
+    cout << D << endl;
+
+    A *= C;
+    cout << A << endl;
+
+    A = D;
+    if (A == D)
+    {
+        cout << "True!" << endl;
+    }
 }
 
